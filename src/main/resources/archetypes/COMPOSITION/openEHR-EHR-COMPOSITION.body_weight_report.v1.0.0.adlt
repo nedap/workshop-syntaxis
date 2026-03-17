@@ -1,0 +1,136 @@
+template (adl_version=2.0.5; rm_release=1.0.4; generated)
+    openEHR-EHR-COMPOSITION.body_weight_report.v1.0.0
+
+specialize
+    openEHR-EHR-COMPOSITION.report-result.v1.0.0
+
+language
+    original_language = <[ISO_639-1::en]>
+    translations = <
+        ["nl"] = <
+            language = <[ISO_639-1::nl]>
+            author = <
+                ["name"] = <"Robin Spek">
+            >
+        >
+    >
+
+description
+    original_author = <
+        ["name"] = <"Robin Spek">
+    >
+    lifecycle_state = <"unmanaged">
+    details = <
+        ["en"] = <
+            language = <[ISO-639_1::en]>
+            purpose = <"">
+        >
+        ["nl"] = <
+            language = <[ISO_639-1::nl]>
+        >
+    >
+
+definition
+    COMPOSITION[id1.1.1] matches {    -- Body weight report
+        content matches {
+            use_archetype OBSERVATION[id0.0.2, openEHR-EHR-OBSERVATION.body_weight-ovl.v1.0.0] occurrences matches {1}
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1.1"] = <
+                text = <"Body weight">
+                description = <"Body weight report initially developed for eOverdracht.">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Body weight">
+                description = <"">
+            >
+        >
+        ["nl"] = <
+            ["id1.1.1"] = <
+                text = <"Lichaamsgewicht">
+                description = <"Lichaamsgewichtrapportage initieel ontwikkeld voor eOverdracht.">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Lichaamsgewicht">
+                description = <"">
+            >
+        >
+    >
+
+------------------------------------------------------------------------
+template_overlay
+    openEHR-EHR-OBSERVATION.body_weight-ovl.v1.0.0
+
+specialize
+    openEHR-EHR-OBSERVATION.body_weight.v2.1.6
+
+definition
+    OBSERVATION[id1.1] matches {
+        /data[id3]/events matches {
+            EVENT[id4] matches {
+                /data[id2]/items matches {
+                    ELEMENT[id5] occurrences matches {1} matches {
+                        value matches {
+                            DV_QUANTITY[id9016.1] matches {
+                                [magnitude, units] matches {
+                                    [{|0.0..1000.0|}, {"kg"}],
+                                    [{|0.0..1000000.0|}, {"g"}]
+                                }
+                            }
+                        }
+                    }
+                }
+                /state[id9]/items matches {
+                    ELEMENT[id10] matches {
+                        value matches {
+                            DV_CODED_TEXT[id9005.1] matches {
+                                defining_code matches {[ac9022.1]}
+                            }
+                        }
+                    }
+                    ELEMENT[id26] occurrences matches {0}
+                }
+            }
+            POINT_EVENT[id27] occurrences matches {0}
+        }
+        /protocol[id16]/items matches {
+            allow_archetype CLUSTER[id21] closed
+            allow_archetype CLUSTER[id28] closed
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1"] = <
+                text = <"Body weight">
+                description = <"Measurement of the body weight of an individual.">
+            >
+            ["ac9022.1"] = <
+                text = <"State of dress">
+                description = <"Description of the state of dress of the person at the time of weighing.">
+            >
+        >
+        ["nl"] = <
+            ["id1.1"] = <
+                text = <"Lichaamsgewicht">
+                description = <"Meting van het lichaamsgewicht van een individu.">
+            >
+            ["ac9022.1"] = <
+                text = <"Kleding">
+                description = <"Beschrijving van de kleding die de persoon draagt op het moment van wegen.">
+            >
+        >
+    >
+    value_sets = <
+        ["ac9022.1"] = <
+            id = <"ac9022.1">
+            members = <"at14", "at18", "at12", "at11">
+        >
+    >

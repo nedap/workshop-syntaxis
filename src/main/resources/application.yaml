@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: Workshop Syntaxis
+
+  datasource:
+    url: jdbc:sqlite:database.sqlite
+    driver-class-name: org.sqlite.JDBC
+    username: sa
+    password: sa
+
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+
+    show-sql: true

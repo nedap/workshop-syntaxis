@@ -1,0 +1,121 @@
+template (adl_version=2.0.5; rm_release=1.1.0; generated)
+    openEHR-EHR-COMPOSITION.body_temperature_report.v1.0.0
+
+specialize
+    openEHR-EHR-COMPOSITION.report-result.v1.0
+
+language
+    original_language = <[ISO_639-1::en]>
+    translations = <
+        ["nl"] = <
+            language = <[ISO_639-1::nl]>
+            author = <
+                ["name"] = <"Robin Spek">
+            >
+        >
+    >
+
+description
+    original_author = <
+        ["name"] = <"Robin Spek">
+    >
+    lifecycle_state = <"unmanaged">
+    details = <
+        ["en"] = <
+            language = <[ISO-639_1::en]>
+        >
+        ["nl"] = <
+            language = <[ISO-639_1::nl]>
+        >
+    >
+
+definition
+    COMPOSITION[id1.1.1] matches {    -- Lichaamstemperatuur
+        content matches {
+            use_archetype OBSERVATION[id0.0.2, openEHR-EHR-OBSERVATION.body_temperature-ovl.v1.0.0] occurrences matches {1}    -- Lichaamstemperatuur
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1.1"] = <
+                text = <"Body temperature">
+                description = <"">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Body temperature">
+                description = <"">
+            >
+        >
+        ["nl"] = <
+            ["id1.1.1"] = <
+                text = <"Lichaamstemperatuur">
+                description = <"">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Lichaamstemperatuur">
+                description = <"">
+            >
+        >
+    >
+
+------------------------------------------------------------------------
+template_overlay
+    openEHR-EHR-OBSERVATION.body_temperature-ovl.v1.0.0
+
+specialize
+    openEHR-EHR-OBSERVATION.body_temperature.v2.1
+
+definition
+    OBSERVATION[id1.1] matches {
+        /data[id3]/events matches {
+            EVENT[id4] matches {
+                /data[id2]/items matches {
+                    ELEMENT[id5.1] occurrences matches {1} matches {
+                        value matches {
+                            DV_QUANTITY[id9003] matches {
+                                [magnitude, units, precision] matches {
+                                    [{|0.0..<100.0|}, {"Cel"}, {1}]
+                                }
+                            }
+                        }
+                    }
+                }
+                state matches {
+                    ITEM_TREE[id30] occurrences matches {0}
+                }
+            }
+        }
+        /protocol[id21]/items matches {
+            allow_archetype CLUSTER[id65] closed
+            allow_archetype CLUSTER[id60] closed
+            allow_archetype CLUSTER[id63] closed
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1"] = <
+                text = <"Lichaamstemperatuur">
+                description = <"A measurement of the body temperature, which is a surrogate for the core body temperature of the individual.">
+            >
+            ["id5.1"] = <
+                text = <"Temperature">
+                description = <"The measured temperature.">
+            >
+        >
+        ["nl"] = <
+            ["id1.1"] = <
+                text = <"Lichaamstemperatuur">
+                description = <"Een meting van de lichaamstemperatuur, wat een surrogaat is van de kerntemperatuur van het lichaam van een individu.">
+            >
+            ["id5.1"] = <
+                text = <"Temperatuur">
+                description = <"De gemeten lichaamstemperatuur (als surrogaat van de kerntemperatuur van het lichaam).">
+            >
+        >
+    >

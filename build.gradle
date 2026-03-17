@@ -1,0 +1,112 @@
+import java.nio.file.Files
+import java.sql.DriverManager
+import java.sql.Connection
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.xerial:sqlite-jdbc:3.49.1.0'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '4.0.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.nedap.workshop'
+version = '0.0.1-SNAPSHOT'
+description = 'Workshop Syntaxis openEHR data'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
+	implementation 'org.hibernate.orm:hibernate-community-dialects'
+
+	implementation 'com.nedap.healthcare.archie:archie-all:3.16.0'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+tasks.register('seedDatabase') {
+	def seedFile = file('src/main/resources/db/seed.sql')
+	def dbFile   = file('database.sqlite')
+
+	inputs.file(seedFile)
+	outputs.file(dbFile)
+
+	doLast {
+		// Check if the seeding sql file exists
+		if (!seedFile.exists()) {
+			throw new GradleException("Seed file not found: ${seedFile}")
+		}
+
+		// Create the database file if it doesn't exist
+		if (dbFile.parentFile != null) {
+			Files.createDirectories(dbFile.parentFile.toPath())
+		}
+
+		println "Seeding database using JDBC..."
+		def url = "jdbc:sqlite:${dbFile.absolutePath}"
+		
+		// Load the SQLite JDBC driver
+		// We use the buildscript classloader to load the driver
+		def driver = Class.forName("org.sqlite.JDBC", true, buildscript.classLoader).newInstance()
+		def properties = new java.util.Properties()
+		Connection conn = null
+		try {
+			conn = driver.connect(url, properties)
+			conn.setAutoCommit(false)
+			def statement = conn.createStatement()
+
+			// Read and split the SQL file into separate statements
+			// We can use a simple split by ';' for this case, 
+			// though it might fail with complex SQL (like strings containing ';').
+			// For seed.sql, it should be fine.
+			def sql = seedFile.text
+			
+			// We split by ';' but we need to handle multi-line statements and avoid issues.
+			// However, SQLite JDBC can execute multiple statements separated by ';' if we use a specific approach.
+			// Actually, standard statement.execute(sql) might only execute the first one.
+			// Let's use a more robust way by splitting.
+			
+			// A better way is to use a scanner or regex to split statements, 
+			// but for this specific seed.sql, we can split by ';' followed by a newline or end of file.
+			sql.split('(?m);\\s*$').each { part ->
+				if (part.trim()) {
+					statement.execute(part)
+				}
+			}
+
+			conn.commit()
+			println "Database seeded at: ${dbFile.absolutePath}"
+		} catch (Exception e) {
+			if (conn != null) conn.rollback()
+			throw new GradleException("Failed to seed database: ${e.message}", e)
+		} finally {
+			if (conn != null) conn.close()
+		}
+	}
+}
+

@@ -1,0 +1,118 @@
+template (adl_version=2.0.5; rm_release=1.0.4; generated)
+    openEHR-EHR-COMPOSITION.blood_pressure_report.v1.0.0
+
+specialize
+    openEHR-EHR-COMPOSITION.report-result.v1.0.0
+
+language
+    original_language = <[ISO_639-1::en]>
+    translations = <
+        ["nl"] = <
+            language = <[ISO_639-1::nl]>
+            author = <
+                ["name"] = <"Robin Spek">
+                ["organisation"] = <"Nedap">
+                ["email"] = <"robin.spek@nedap.com">
+            >
+        >
+    >
+
+description
+    original_author = <
+        ["name"] = <"Robin Spek">
+    >
+    lifecycle_state = <"unmanaged">
+    details = <
+        ["en"] = <
+            language = <[ISO-639_1::en]>
+            purpose = <"">
+        >
+        ["nl"] = <
+            language = <[ISO_639-1::nl]>
+        >
+    >
+
+definition
+    COMPOSITION[id1.1.1] matches {    -- Blood pressure report
+        content matches {
+            use_archetype OBSERVATION[id0.0.2, openEHR-EHR-OBSERVATION.blood_pressure-ovl.v1.0.0] occurrences matches {1}
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1.1"] = <
+                text = <"Blood pressure">
+                description = <"Blood pressure report initially developed for eOverdracht.">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Blood Pressure">
+                description = <"">
+            >
+        >
+        ["nl"] = <
+            ["id1.1.1"] = <
+                text = <"Bloeddruk">
+                description = <"Bloeddrukrapportage initieel ontwikkeld voor eOverdracht.">
+                code = <"id1">
+            >
+            ["id0.0.2"] = <
+                text = <"Bloeddruk">
+                description = <"">
+            >
+        >
+    >
+
+------------------------------------------------------------------------
+template_overlay
+    openEHR-EHR-OBSERVATION.blood_pressure-ovl.v1.0.0
+
+specialize
+    openEHR-EHR-OBSERVATION.blood_pressure.v2.0.8
+
+definition
+    OBSERVATION[id1.1] matches {
+        /data[id2]/events matches {
+            EVENT[id7] matches {
+                /data[id4]/items matches {
+                    ELEMENT[id5] occurrences matches {1}
+                    ELEMENT[id6] occurrences matches {1}
+                    ELEMENT[id1008] occurrences matches {0}
+                    ELEMENT[id1060] occurrences matches {0}
+                }
+                /state[id8]/items matches {
+                    ELEMENT[id1053] occurrences matches {0}
+                    allow_archetype CLUSTER[id1031] closed
+                    ELEMENT[id1044] occurrences matches {0}
+                    ELEMENT[id1006] occurrences matches {0}
+                }
+            }
+            INTERVAL_EVENT[id1043] occurrences matches {0}
+        }
+        /protocol[id12]/items matches {
+            allow_archetype CLUSTER[id1058] closed
+            ELEMENT[id1039] occurrences matches {0}
+            ELEMENT[id1055] occurrences matches {0}
+            ELEMENT[id1056] occurrences matches {0}
+            allow_archetype CLUSTER[id1026] closed
+            allow_archetype CLUSTER[id1059] closed
+        }
+    }
+
+terminology
+    term_definitions = <
+        ["en"] = <
+            ["id1.1"] = <
+                text = <"Blood pressure">
+                description = <"The local measurement of arterial blood pressure which is a surrogate for arterial pressure in the systemic circulation.">
+            >
+        >
+        ["nl"] = <
+            ["id1.1"] = <
+                text = <"Bloeddruk">
+                description = <"De lokale meting van de arteriële bloeddruk, welke surrogaat is voor de arteriële druk in de systemische circulatie.">
+            >
+        >
+    >
